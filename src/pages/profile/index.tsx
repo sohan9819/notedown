@@ -17,7 +17,7 @@ const Profile: NextPage = () => {
   }, []);
 
   return (
-    <div className="container mx-auto flex min-h-screen w-screen flex-col items-center justify-center  py-6">
+    <div className="container mx-auto flex min-h-[calc(100vh-65.5px-68px)] w-screen flex-col items-center justify-center  py-6">
       <div className="stats shadow">
         <div className="stat">
           <div className="stat-figure text-primary">

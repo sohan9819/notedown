@@ -1,6 +1,6 @@
 import { AiFillInstagram, AiFillGithub, AiFillLinkedin } from "react-icons/ai";
 
-export const Footer = () => {
+const Footer = () => {
   return (
     <footer className="footer items-center bg-neutral p-4 text-neutral-content">
       <div className="grid-flow-col items-center">
@@ -31,3 +31,5 @@ export const Footer = () => {
     </footer>
   );
 };
+
+export default Footer;

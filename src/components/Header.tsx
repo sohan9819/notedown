@@ -3,15 +3,15 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { MdNoteAlt } from "react-icons/md";
 
-export const Header = () => {
+const Header = () => {
   const router = useRouter();
   const { data: sessionData } = useSession();
 
   return (
     <div className="navbar  bg-base-100">
       <div className="navbar-start">
-        <div className="dropdown">
-          <label tabIndex={0} className="btn-ghost btn-circle btn">
+        <div className="dropdown ">
+          <label tabIndex={0} className="btn-ghost btn-circle btn ">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5"
@@ -43,7 +43,7 @@ export const Header = () => {
           </ul> */}
           <ul
             tabIndex={0}
-            className="dropdown-content menu rounded-box menu-compact w-52 bg-base-100 p-2 shadow"
+            className="dropdown-content menu rounded-box menu-compact w-52 bg-base-100 p-2 shadow "
           >
             <li>
               <a>
@@ -107,7 +107,7 @@ export const Header = () => {
             >
               CREATE NOTE
             </button>
-            <div className="dropdown-end dropdown">
+            <div className="dropdown dropdown-end">
               <label tabIndex={0} className="btn-ghost btn-circle avatar btn">
                 <div className="w-10 rounded-full">
                   <img
@@ -149,3 +149,5 @@ export const Header = () => {
     </div>
   );
 };
+
+export default Header;
