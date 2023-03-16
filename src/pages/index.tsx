@@ -3,26 +3,42 @@ import { signIn, signOut, useSession } from "next-auth/react";
 
 import { api } from "~/utils/api";
 import { AppTheme } from "~/utils/themeStore";
+import { useEffect } from "react";
+import { useAuth } from "~/store/authStore";
+import { useTopicContext } from "~/context/topicContext";
+import { useNoteContext } from "~/context/noteContext";
+import { Note, Topic } from "@prisma/client";
+import Link from "next/link";
 
 const Home: NextPage = () => {
-  // const hello = api.example.hello.useQuery({ text: "From Hello world" });
-
   const { data: sessionData, status: sessionStatus } = useSession();
-  const { data: notes, status: notesStatus } = api.note.getAll.useQuery(
-    undefined,
-    {
-      enabled: sessionData?.user !== undefined,
+  const { setAuth, data, status } = useAuth();
+
+  const { topics, topicsStatus } = useTopicContext();
+  const { notes, notesStatus, deleteNote } = useNoteContext();
+
+  useEffect(() => {
+    // console.log({
+    //   sessionData,
+    //   sessionStatus,
+    // });
+    if (sessionData !== undefined) {
+      setAuth({ data: sessionData, status: sessionStatus });
     }
-  );
+  }, [sessionStatus]);
+
+  useEffect(() => {
+    console.log(notes);
+  }, [notesStatus]);
 
   return (
     <>
-      {sessionStatus === "loading" && (
+      {status === "loading" && (
         <div className="hero min-h-[calc(100vh-65.5px-68px)] bg-base-200">
           <button className="btn-xl loading btn">loading</button>
         </div>
       )}
-      {sessionStatus === "unauthenticated" && (
+      {status === "unauthenticated" && (
         <div className="hero min-h-[calc(100vh-65.5px-68px)] bg-base-200">
           <div className="hero-content text-center">
             <div className="max-w-md">
@@ -45,8 +61,8 @@ const Home: NextPage = () => {
           </div>
         </div>
       )}
-      {sessionStatus === "authenticated" && (
-        <div className="container mx-auto flex min-h-screen w-screen flex-col items-center justify-evenly gap-4 py-6">
+      {status === "authenticated" && (
+        <div className="container mx-auto flex min-h-screen w-screen flex-col items-center justify-start gap-8 py-6">
           <div className="flex flex-row items-center justify-center">
             <div className="form-control">
               <input
@@ -57,126 +73,54 @@ const Home: NextPage = () => {
             </div>
           </div>
           <div className="flex max-w-xl flex-wrap items-center justify-center gap-2 ">
-            <button className="btn">#tag1</button>
-            <button className="btn">#tag2</button>
-            <button className="btn">#tag3</button>
-            <button className="btn">#tag4</button>
-            <button className="btn">#tag5</button>
-            <button className="btn">#tag6</button>
-            <button className="btn">#tag7</button>
-            <button className="btn">#tag8</button>
-            <button className="btn">#tag9</button>
-            <button className="btn">#tag10</button>
+            {topicsStatus === "loading" && (
+              <option disabled selected>
+                Loading Your Topics ...
+              </option>
+            )}
+            {topics?.map((topic: Topic, index: number) => {
+              return (
+                <button className="btn" key={index} value={topic.id}>
+                  {topic.title}
+                </button>
+              );
+            })}
           </div>
           <div className="container flex min-h-full w-screen flex-wrap items-center justify-evenly gap-2 ">
-            <div className="card w-96 bg-base-100 shadow-xl">
-              <div className="card-body">
-                <h2 className="card-title">Note Title</h2>
-                <p>
-                  Some note describtion. If a dog chews shoes whose shoes does
-                  he choose...
-                </p>
-                <div className="card-actions justify-end">
-                  <button className="btn-primary btn">Read More</button>
-                </div>
+            {notesStatus === "loading" && (
+              <div className="hero min-h-[calc(100vh-65.5px-68px)] bg-base-200">
+                <button className="btn-xl loading btn">loading</button>
               </div>
-            </div>
-            <div className="card w-96 bg-base-100 shadow-xl">
-              <div className="card-body">
-                <h2 className="card-title">Note Title</h2>
-                <p>
-                  Some note describtion. If a dog chews shoes whose shoes does
-                  he choose...
-                </p>
-                <div className="card-actions justify-end">
-                  <button className="btn-primary btn">Read More</button>
+            )}
+            {notes?.map((note: Note, index: number) => {
+              return (
+                <div className="card w-96 bg-base-100 shadow-xl" key={index}>
+                  <div className="card-body">
+                    <h2 className="card-title">{note.title}</h2>
+                    <p>
+                      Topic :{" "}
+                      {topics?.map((topic: Topic) => {
+                        return topic.id == note.topicId ? topic.title : "";
+                      })}
+                    </p>
+                    <div className="card-actions justify-end">
+                      <button
+                        className="btn-error btn"
+                        onClick={() => void deleteNote.mutate({ id: note.id })}
+                      >
+                        Delete Note
+                      </button>
+                      <Link
+                        href={`/note/${note.id}`}
+                        className="btn-primary btn"
+                      >
+                        Read More
+                      </Link>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-            <div className="card w-96 bg-base-100 shadow-xl">
-              <div className="card-body">
-                <h2 className="card-title">Note Title</h2>
-                <p>
-                  Some note describtion. If a dog chews shoes whose shoes does
-                  he choose...
-                </p>
-                <div className="card-actions justify-end">
-                  <button className="btn-primary btn">Read More</button>
-                </div>
-              </div>
-            </div>
-            <div className="card w-96 bg-base-100 shadow-xl">
-              <div className="card-body">
-                <h2 className="card-title">Note Title</h2>
-                <p>
-                  Some note describtion. If a dog chews shoes whose shoes does
-                  he choose...
-                </p>
-                <div className="card-actions justify-end">
-                  <button className="btn-primary btn">Read More</button>
-                </div>
-              </div>
-            </div>
-            <div className="card w-96 bg-base-100 shadow-xl">
-              <div className="card-body">
-                <h2 className="card-title">Note Title</h2>
-                <p>
-                  Some note describtion. If a dog chews shoes whose shoes does
-                  he choose...
-                </p>
-                <div className="card-actions justify-end">
-                  <button className="btn-primary btn">Read More</button>
-                </div>
-              </div>
-            </div>
-            <div className="card w-96 bg-base-100 shadow-xl">
-              <div className="card-body">
-                <h2 className="card-title">Note Title</h2>
-                <p>
-                  Some note describtion. If a dog chews shoes whose shoes does
-                  he choose...
-                </p>
-                <div className="card-actions justify-end">
-                  <button className="btn-primary btn">Read More</button>
-                </div>
-              </div>
-            </div>
-            <div className="card w-96 bg-base-100 shadow-xl">
-              <div className="card-body">
-                <h2 className="card-title">Note Title</h2>
-                <p>
-                  Some note describtion. If a dog chews shoes whose shoes does
-                  he choose...
-                </p>
-                <div className="card-actions justify-end">
-                  <button className="btn-primary btn">Read More</button>
-                </div>
-              </div>
-            </div>
-            <div className="card w-96 bg-base-100 shadow-xl">
-              <div className="card-body">
-                <h2 className="card-title">Note Title</h2>
-                <p>
-                  Some note describtion. If a dog chews shoes whose shoes does
-                  he choose...
-                </p>
-                <div className="card-actions justify-end">
-                  <button className="btn-primary btn">Read More</button>
-                </div>
-              </div>
-            </div>
-            <div className="card w-96 bg-base-100 shadow-xl">
-              <div className="card-body">
-                <h2 className="card-title">Note Title</h2>
-                <p>
-                  Some note describtion. If a dog chews shoes whose shoes does
-                  he choose...
-                </p>
-                <div className="card-actions justify-end">
-                  <button className="btn-primary btn">Read More</button>
-                </div>
-              </div>
-            </div>
+              );
+            })}
           </div>
         </div>
       )}

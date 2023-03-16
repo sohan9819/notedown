@@ -6,5 +6,7 @@ export const useTheme = create<{
   setAppTheme: (theme: AppTheme) => void;
 }>((set) => ({
   appTheme: "forest",
-  setAppTheme: (theme) => set({ appTheme: theme }),
+  setAppTheme: (theme) => {
+    return set({ appTheme: theme });
+  },
 }));

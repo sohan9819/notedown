@@ -1,7 +1,7 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { MdNoteAlt } from "react-icons/md";
+import { MdNoteAlt, MdTopic } from "react-icons/md";
 
 const Header = () => {
   const router = useRouter();
@@ -69,6 +69,12 @@ const Header = () => {
                 <MdNoteAlt className="text-xl" />
                 Note
               </a>
+            </li>
+            <li>
+              <Link href={"/topic"}>
+                <MdTopic className="text-xl" />
+                Topic
+              </Link>
             </li>
             <li>
               <a>

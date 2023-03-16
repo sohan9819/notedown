@@ -2,6 +2,8 @@ import { type AppType } from "next/app";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { Header, Footer } from "~/components";
+import { NoteContextProvider } from "~/context/noteContext";
+import { TopicContextProvider } from "~/context/topicContext";
 import Head from "./head";
 
 import { api } from "~/utils/api";
@@ -16,7 +18,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <SessionProvider session={session}>
       <Head />
       <Header />
-      <Component {...pageProps} />
+      <NoteContextProvider>
+        <TopicContextProvider>
+          <Component {...pageProps} />
+        </TopicContextProvider>
+      </NoteContextProvider>
       <Footer />
     </SessionProvider>
   );
