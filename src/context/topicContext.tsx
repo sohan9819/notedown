@@ -1,26 +1,40 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useState } from "react";
 import { ReactNode } from "react-markdown/lib/ast-to-react";
 import { useAuth } from "~/store/authStore";
 import { api } from "~/utils/api";
 import { Topic } from "@prisma/client";
 
-// type TopicContextType = {
-//   topics: Topic[] | undefined;
-//   topicsStatus: string;
-//   createTopic: (
-//     data: Omit<Topic, "id" | "createdAt" | "updatedAt">,
-//     options?: any
-//   ) => Promise<any>;
-//   deleteTopic: (id: number, options?: any) => Promise<any>;
-// };
+type TopicsStatus = "loading" | "error" | "success";
 
-export const TopicContext = createContext();
+type CreateTopicProps = {
+  title: string;
+};
+
+type TopicIdProp = {
+  id: string;
+};
+
+type TopicContextType = {
+  topicsList: Topic[];
+  topicsListStatus: TopicsStatus;
+  createTopic: (topic: CreateTopicProps) => void;
+  deleteTopic: (topicId: TopicIdProp) => void;
+  getTopicById: (topicId: TopicIdProp) => Topic | undefined;
+};
+
+export const TopicContext = createContext<TopicContextType>(
+  {} as TopicContextType
+);
 
 export const TopicContextProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
+  const [topicsList, setTopicsList] = useState([] as Topic[]);
+  const [topicsListStatus, setTopicsListStatus] =
+    useState<TopicsStatus>("loading");
+
   const { data } = useAuth();
   const {
     data: topics,
@@ -30,24 +44,45 @@ export const TopicContextProvider = ({
     enabled: data?.user !== undefined,
     onSuccess: (data) => {
       console.log(data);
+      setTopicsList(data);
+      setTopicsListStatus("success");
+    },
+    onError(err) {
+      console.error(err.message);
+      setTopicsListStatus("error");
     },
   });
 
-  const createTopic = api.topic.create.useMutation({
+  const createTopicQuery = api.topic.create.useMutation({
     onSuccess: () => {
       void refetchTopics();
     },
   });
 
-  const deleteTopic = api.topic.delete.useMutation({
+  const deleteTopicQuery = api.topic.delete.useMutation({
     onSuccess: () => {
       void refetchTopics();
     },
   });
+
+  const createTopic = (topic: CreateTopicProps) =>
+    void createTopicQuery.mutate(topic);
+
+  const deleteTopic = (topicId: TopicIdProp) =>
+    void deleteTopicQuery.mutate(topicId);
+
+  const getTopicById = ({ id }: TopicIdProp) =>
+    topicsList.find((topic) => id === topic.id);
 
   return (
     <TopicContext.Provider
-      value={{ topics, topicsStatus, createTopic, deleteTopic }}
+      value={{
+        topicsList,
+        topicsListStatus,
+        createTopic,
+        deleteTopic,
+        getTopicById,
+      }}
     >
       {children}
     </TopicContext.Provider>

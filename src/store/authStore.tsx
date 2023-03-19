@@ -1,36 +1,37 @@
 import create from "zustand";
+import { Session } from "next-auth";
 
-type User = {
-  name: string;
-  email: string;
-  image: string;
-  id: string;
-};
+// type User = {
+//   name: string;
+//   email: string;
+//   image: string;
+//   id: string;
+// };
 
-type Data = {
-  user: User;
-  expires: string;
-};
+// type Data = {
+//   user: User;
+//   expires: string;
+// };
 
 type Status = "authenticated" | "loading" | "unauthenticated";
 
 type Auth = {
-  data: Data | null;
+  data: Session | null;
   status: "authenticated" | "loading" | "unauthenticated";
 };
 
 interface useAuthProps extends Auth {
-  setData: (data: Data) => void;
+  setData: (data: Session | null) => void;
   setStatus: (status: Status) => void;
-  setAuth: ({ data, status }: useAuthProps) => void;
+  // setAuth: ({ data, status }: useAuthProps) => void;
 }
 
 export const useAuth = create<useAuthProps>((set) => ({
-  data: {} as Data,
+  data: {} as Session,
   status: "loading",
-  setData: (data: Data) => set({ data }),
+  setData: (data: Session | null) => set({ data }),
   setStatus: (status: Status) => set({ status }),
-  setAuth: ({ data, status }: useAuthProps) => set({ data, status }),
+  // setAuth: ({ data, status }: Auth) => set({ data, status }),
 }));
 
 /* 

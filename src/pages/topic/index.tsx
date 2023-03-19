@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, FormEvent } from "react";
 import { useTopicContext } from "~/context/topicContext";
 import { api } from "~/utils/api";
 import { useAuth } from "~/store/authStore";
@@ -9,18 +9,20 @@ import moment from "moment";
 
 const TopicPage = () => {
   const { data } = useAuth();
-  const { topics, topicsStatus, createTopic, deleteTopic } = useTopicContext();
+  const { topicsList, topicsListStatus, createTopic, deleteTopic } =
+    useTopicContext();
 
-  const addTopicHandler = (e: React.FormEvent<HTMLFormElement>) => {
+  const addTopicHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const title: string = e.target.title.value.toUpperCase();
+    const title: string = (
+      e.currentTarget.elements.namedItem("title") as HTMLInputElement
+    ).value.toUpperCase();
     if (title !== "") {
-      // console.log("Adding a topic");
-      createTopic.mutate({
+      createTopic({
         title,
       });
     }
-    e.target.reset();
+    e.currentTarget.reset();
   };
 
   return (
@@ -40,7 +42,7 @@ const TopicPage = () => {
       </form>
       <h1>Your Topics</h1>
       <div className="flex max-w-3xl flex-wrap items-center justify-center gap-2 ">
-        {topicsStatus === "loading" && (
+        {topicsListStatus === "loading" && (
           <div className="hero min-h-[calc(100vh-65.5px-68px)] bg-base-200">
             <button className="btn-xl lower loading btn">loading</button>
           </div>
@@ -75,7 +77,7 @@ const TopicPage = () => {
               </tr>
             </thead>
             <tbody>
-              {topics?.map((topic: Topic, index: number) => {
+              {topicsList?.map((topic: Topic, index: number) => {
                 return (
                   <tr key={index} className="hover">
                     <th>{index + 1}</th>
@@ -89,7 +91,7 @@ const TopicPage = () => {
                       <IoMdTrash
                         className="text-xl"
                         onClick={() => {
-                          deleteTopic.mutate({
+                          deleteTopic({
                             id: topic.id,
                           });
                         }}
@@ -99,7 +101,7 @@ const TopicPage = () => {
                 );
               })}
 
-              {topics && topics.length === 0 ? (
+              {topicsList && topicsList.length === 0 ? (
                 <td colSpan={4} className="text-center  text-error">
                   No tags available
                 </td>

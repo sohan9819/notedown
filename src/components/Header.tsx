@@ -1,7 +1,7 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { MdNoteAlt, MdTopic } from "react-icons/md";
+import { MdNoteAlt, MdTopic, MdHomeFilled } from "react-icons/md";
 
 const Header = () => {
   const router = useRouter();
@@ -27,48 +27,21 @@ const Header = () => {
               />
             </svg>
           </label>
-          {/* <ul
-            tabIndex={0}
-            className="dropdown-content menu rounded-box menu-compact mt-3 w-52 bg-base-100 p-2 shadow"
-          >
-            <li>
-              <a>Homepage</a>
-            </li>
-            <li>
-              <a>Portfolio</a>
-            </li>
-            <li>
-              <a>About</a>
-            </li>
-          </ul> */}
           <ul
             tabIndex={0}
             className="dropdown-content menu rounded-box menu-compact w-52 bg-base-100 p-2 shadow "
           >
             <li>
-              <a>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                  />
-                </svg>
+              <Link href={"/note"}>
+                <MdHomeFilled className="text-xl" />
                 Home
-              </a>
+              </Link>
             </li>
             <li>
-              <a>
+              <Link href={"/note/create"}>
                 <MdNoteAlt className="text-xl" />
                 Note
-              </a>
+              </Link>
             </li>
             <li>
               <Link href={"/topic"}>
@@ -76,7 +49,7 @@ const Header = () => {
                 Topic
               </Link>
             </li>
-            <li>
+            {/* <li>
               <a>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -94,7 +67,7 @@ const Header = () => {
                 </svg>
                 Stats
               </a>
-            </li>
+            </li> */}
           </ul>
         </div>
       </div>
@@ -108,8 +81,8 @@ const Header = () => {
         {sessionData ? (
           <>
             <button
-              className="btn-secondary btn-sm btn mx-4"
-              onClick={() => void router.push("/create")}
+              className="btn-secondary btn-sm btn mx-4 hidden sm:block"
+              onClick={() => void router.push("/note/create")}
             >
               CREATE NOTE
             </button>
