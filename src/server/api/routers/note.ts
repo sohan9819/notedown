@@ -9,26 +9,6 @@ export const noteRouter = createTRPCRouter({
       },
     });
   }),
-  getByTopic: protectedProcedure
-    .input(z.object({ topicId: z.string() }))
-    .query(({ ctx, input }) => {
-      return ctx.prisma.note.findMany({
-        where: {
-          topicId: ctx.session.user.id,
-          userId: ctx.session.user.id,
-        },
-      });
-    }),
-  getById: protectedProcedure
-    .input(z.object({ noteId: z.string() }))
-    .query(({ ctx, input }) => {
-      return ctx.prisma.note.findMany({
-        where: {
-          noteId: ctx.session.user.id,
-          userId: ctx.session.user.id,
-        },
-      });
-    }),
   create: protectedProcedure
     .input(
       z.object({ title: z.string(), content: z.string(), topicId: z.string() })
