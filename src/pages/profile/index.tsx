@@ -5,57 +5,69 @@ import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import moment from "moment";
+import { useAuth } from "~/store/authStore";
+import { useTopicContext } from "~/context/topicContext";
+import { useNoteContext } from "~/context/noteContext";
+import Link from "next/link";
 
 const Profile: NextPage = () => {
-  const { data: sessionData } = useSession();
+  const { data } = useAuth();
   const router = useRouter();
-
-  console.log(sessionData);
+  const { topicsList } = useTopicContext();
+  const { notesList } = useNoteContext();
 
   useEffect(() => {
-    sessionData ? "" : void router.push("/auth");
+    data ? "" : void router.push("/auth");
   }, []);
 
   return (
     <div className="container mx-auto flex min-h-[calc(100vh-65.5px-68px)] w-screen flex-col items-center justify-center  py-6">
-      <div className="stats shadow">
+      <div className="stats stats-vertical shadow md:stats-horizontal">
         <div className="stat">
-          <div className="stat-figure text-primary">
-            <AiTwotoneTag className="text-4xl" />
+          <div className="stat-figure text-secondary">
+            <div className="online avatar">
+              <div className="w-16 rounded-full">
+                <img
+                  src={data?.user?.image ?? ""}
+                  alt={data?.user?.name ?? ""}
+                />
+              </div>
+            </div>
           </div>
-          <div className="stat-title">Total Tags</div>
-          <div className="stat-value text-primary">25</div>
-          <div className="stat-desc">number of tags created</div>
+          <div className="stat-value">{data?.user?.name}</div>
+          <div className="stat-title">{data?.user?.email}</div>
+          <div className="stat-desc text-secondary">
+            auth at{" "}
+            {moment(`${data?.expires ?? ""}`).format(
+              "MMMM D, YYYY [at] h:mm A"
+            )}
+          </div>
         </div>
 
         <div className="stat">
           <div className="stat-figure text-secondary">
             <SlNotebook className="text-4xl" />
           </div>
-          <div className="stat-title">Total Notes</div>
-          <div className="stat-value text-secondary">20</div>
+          <div className="stat-title">
+            <Link href={"/note"}>Total Notes</Link>
+          </div>
+          <div className="stat-value text-secondary">
+            {notesList && notesList.length}
+          </div>
           <div className="stat-desc">number of notes created</div>
         </div>
 
         <div className="stat">
-          <div className="stat-figure text-secondary">
-            <div className="online avatar">
-              <div className="w-16 rounded-full">
-                <img
-                  src={sessionData?.user?.image ?? ""}
-                  alt={sessionData?.user?.name ?? ""}
-                />
-              </div>
-            </div>
+          <div className="stat-figure text-primary">
+            <AiTwotoneTag className="text-4xl" />
           </div>
-          <div className="stat-value">{sessionData?.user?.name}</div>
-          <div className="stat-title">{sessionData?.user?.email}</div>
-          <div className="stat-desc text-secondary">
-            auth at{" "}
-            {moment(`${sessionData?.expires ?? ""}`).format(
-              "MMMM D, YYYY [at] h:mm A"
-            )}
+          <div className="stat-title">
+            <Link href={"/topic"}>Total Topics</Link>
           </div>
+          <div className="stat-value text-primary">
+            {topicsList && topicsList.length}
+          </div>
+          <div className="stat-desc">number of topics created</div>
         </div>
       </div>
     </div>
